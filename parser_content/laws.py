@@ -172,7 +172,5 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
 
 
 if __name__ == "__main__":
-    t = Docx()
-    b = chunk(r"E:\Rag-CKH\test_file\AQ-1025-2006矿井瓦斯等级鉴定规范.pdf")
-    for i in b:
-        print(i)
+    b=chunk(r"E:\Rag-CKH\test_file\2022版煤矿安全规程.docx")
+    print(len(b))

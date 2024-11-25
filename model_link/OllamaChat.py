@@ -7,8 +7,6 @@ import os
 
 from nlp.token_num import num_tokens_from_string
 
-
-
 class Base(ABC):
     def __init__(self, key, model_name, base_url):
         timeout = int(os.environ.get('LM_TIMEOUT_SECONDS', 600))

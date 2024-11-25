@@ -11,7 +11,7 @@ if not ELASTICSEARCH.indexExist(knowledgebase_name):
     ELASTICSEARCH.createIdx(knowledgebase_name, json.load(
         open(os.path.join(get_project_base_directory(), "knowledgebase/mapping.json"), "r")))
 
-#Laws解析方法
+#使用内置Laws解析方法
 from parser_content import laws
 from knowledgebase.insert import addChunk
 #定义解析方法钩子
