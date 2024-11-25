@@ -1,10 +1,17 @@
 import os
+
 from ruamel.yaml import YAML
+
 SERVICE_CONF = "service_conf.yaml"
+PROJECT_BASE = "E:\\Rag-CKH\\"
+
+FLOAT_ZERO = 1e-8
+PARAM_MAXDEPTH = 5
+DEBUG = 1
+
 
 def get_project_base_directory(*args):
     global PROJECT_BASE
-    PROJECT_BASE="E:\\Rag-CKH\\"
     if PROJECT_BASE is None:
         PROJECT_BASE = os.path.abspath(
             os.path.join(
@@ -13,14 +20,15 @@ def get_project_base_directory(*args):
                 os.pardir,
             )
         )
-
     if args:
         return os.path.join(PROJECT_BASE, *args)
     return PROJECT_BASE
 
+
 def conf_realpath(conf_name):
     conf_path = f"{conf_name}"
     return os.path.join(get_project_base_directory(), conf_path)
+
 
 def load_yaml_conf(conf_path):
     if not os.path.isabs(conf_path):
@@ -33,6 +41,7 @@ def load_yaml_conf(conf_path):
         raise EnvironmentError(
             "loading yaml file config from {} failed:".format(conf_path), e
         )
+
 
 def get_base_config(key, default=None, conf_name=SERVICE_CONF) -> dict:
     local_config = {}
@@ -57,8 +66,5 @@ def get_base_config(key, default=None, conf_name=SERVICE_CONF) -> dict:
     config.update(local_config)
     return config.get(key, default) if key is not None else config
 
-ES = get_base_config("es", {})
-FLOAT_ZERO = 1e-8
-PARAM_MAXDEPTH = 5
 
-DEBUG=1
+ES = get_base_config("es", {})
