@@ -34,15 +34,15 @@ class Dealer:
         try:
             self.dictionary = json.load(open(path, 'r',encoding="utf-8"))
         except Exception as e:
-            logging.warn("Missing synonym.json")
+            print("Missing synonym.json")
             print(e)
             self.dictionary = {}
 
         if not redis:
-            logging.warning(
+            printing(
                 "Realtime synonym is disabled, since no redis connection.")
         if not len(self.dictionary.keys()):
-            logging.warning(f"Fail to load synonym")
+            printing(f"Fail to load synonym")
 
         self.redis = redis
         self.load()
@@ -66,7 +66,7 @@ class Dealer:
             d = json.loads(d)
             self.dictionary = d
         except Exception as e:
-            logging.error("Fail to load synonym!" + str(e))
+            print("Fail to load synonym!" + str(e))
 
     def lookup(self, tk):
         self.lookup_num += 1

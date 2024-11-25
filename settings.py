@@ -1,5 +1,5 @@
 import os
-
+import comtypes.client
 from ruamel.yaml import YAML
 
 SERVICE_CONF = "service_conf.yaml"
@@ -8,7 +8,20 @@ PROJECT_BASE = "E:\\Rag-CKH\\"
 FLOAT_ZERO = 1e-8
 PARAM_MAXDEPTH = 5
 DEBUG = 1
+LIGHTEN = int(os.environ.get('LIGHTEN', "0"))
 
+def to_slashes(path):
+    return os.path.normpath(path).replace('\\', '/')
+
+def convert_doc_to_docx(input_doc_path):
+    word = comtypes.client.CreateObject('Word.Application')
+    word.Visible = False
+    doc = word.Documents.Open(input_doc_path)
+    output_docx_path = input_doc_path.replace('.doc', '.docx')  # 生成输出路径
+    doc.SaveAs(output_docx_path, FileFormat=16)  # 16 表示 docx 格式
+    doc.Close()
+    word.Quit()
+    return output_docx_path  # 返回新生成的 .docx 文件路径
 
 def get_project_base_directory(*args):
     global PROJECT_BASE

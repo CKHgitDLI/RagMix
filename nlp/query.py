@@ -97,7 +97,7 @@ class EsQueryer:
             twts = self.tw.weights([tt])
             # syns = self.syn.lookup(tt)
             # if syns: keywords.extend(syns)
-            logging.info(json.dumps(twts, ensure_ascii=False))
+            print(json.dumps(twts, ensure_ascii=False))
             tms = []
             for tk, w in sorted(twts, key=lambda x: x[1] * -1):
                 sm = rag_tokenizer.fine_grained_tokenize(tk).split(" ") if need_fine_grained_tokenize(tk) else []
