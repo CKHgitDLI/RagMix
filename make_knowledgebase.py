@@ -17,6 +17,6 @@ from knowledgebase.insert import addChunk
 #定义解析方法钩子
 a=laws.chunk
 #指定文件解析Chunk
-chunk=a("D:\\Rag-CKH\\2022版煤矿安全规程.docx")
+chunk=a(r"E:\Rag-CKH\test_file\2022版煤矿安全规程.docx")
 #添加到数据库中
 addChunk(embd_mdl=ollama_embedding,chunk=chunk,knowledgebase_name="ckh")

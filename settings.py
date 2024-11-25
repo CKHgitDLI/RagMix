@@ -4,7 +4,7 @@ SERVICE_CONF = "service_conf.yaml"
 
 def get_project_base_directory(*args):
     global PROJECT_BASE
-    PROJECT_BASE="D:\\Rag-CKH\\"
+    PROJECT_BASE="E:\\Rag-CKH\\"
     if PROJECT_BASE is None:
         PROJECT_BASE = os.path.abspath(
             os.path.join(

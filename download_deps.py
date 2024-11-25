@@ -47,7 +47,7 @@ def install_package(python_env, pack_path):
 
 
 if __name__ == "__main__":
-    # install_package(r"D:\Rag-CKH\64env\Scripts\python.exe", r"D:\Rag-CKH\requirements.txt")
+    install_package(r"D:\CondaEnv\RagMix\python.exe", r"requirements.txt")
 
     for url in urls:
         filename = url.split("/")[-1]

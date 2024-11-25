@@ -1,3 +1,4 @@
+version: '0.1'
 services:
   es01:
     container_name: ckh-es-01
@@ -5,7 +6,7 @@ services:
     volumes:
       - esdata01:/usr/share/elasticsearch/data
     ports:
-      - ${ES_PORT}:9200
+      - 1200:9200
     environment:
       - node.name=es01
       - ELASTIC_PASSWORD=ckh
