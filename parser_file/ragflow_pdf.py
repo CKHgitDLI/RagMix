@@ -965,11 +965,11 @@ class RAGFlowPdfParser:
 
             dfs(outlines, 0)
         except Exception as e:
-            print(f"Outlines exception: {e}")
+            print(f"大纲提取错误: {e}")
         if not self.outlines:
-            print(f"Miss outlines")
+            print(f"没有找到大纲")
 
-        print("Images converted.")
+        print("页面照片提取完成")
         self.is_english = [re.search(r"[a-zA-Z0-9,/¸;:'\[\]\(\)!@#$%^&*\"?<>._-]{30,}", "".join(
             random.choices([c["text"] for c in self.page_chars[i]], k=min(100, len(self.page_chars[i]))))) for i in
                            range(len(self.page_chars))]
@@ -1001,7 +1001,7 @@ class RAGFlowPdfParser:
             self.__ocr(i + 1, img, chars, zoomin * 2)
             if callback and i % 6 == 5:
                 print((i + 1) * 0.6 / len(self.page_images), "")
-        print("OCR:", timer()-st)
+        print("OCR总时长:", timer()-st)
 
         if not self.is_english and not any(
                 [c for c in self.page_chars]) and self.boxes:
@@ -1009,7 +1009,7 @@ class RAGFlowPdfParser:
             self.is_english = re.search(r"[\na-zA-Z0-9,/¸;:'\[\]\(\)!@#$%^&*\"?<>._-]{30,}",
                                         "".join([b["text"] for b in random.choices(bxes, k=min(30, len(bxes)))]))
 
-        print("Is it English:", self.is_english)
+        print("是否为英文文档:", self.is_english)
 
         self.page_cum_height = np.cumsum(self.page_cum_height)
         assert len(self.page_cum_height) == len(self.page_images) + 1

@@ -80,7 +80,7 @@ class Pdf(PdfParser):
 
     def __call__(self, filename, binary=None, from_page=0,
                  to_page=100000, zoomin=3, callback=None):
-        callback("OCR is running...")
+        callback("准备启动PDF OCR")
         self.__images__(
             filename if not binary else binary,
             zoomin,
@@ -88,17 +88,17 @@ class Pdf(PdfParser):
             to_page,
             callback
         )
-        callback("OCR finished")
+        callback("PDF OCR结束")
 
         from timeit import default_timer as timer
         start = timer()
         self._layouts_rec(zoomin)
-        callback(0.67, "Layout analysis finished")
-        if DEBUG:print("layouts:".format(
+        callback("布局分析结束")
+        if DEBUG:print("布局:".format(
             (timer() - start) / (self.total_page + 0.1)))
         self._naive_vertical_merge()
 
-        callback(0.8, "Text extraction finished")
+        callback("文本提取结束")
 
         return [(b["text"], self._line_tag(b, zoomin))
                 for b in self.boxes], None
@@ -108,6 +108,7 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
     """
         Supported file formats are docx, pdf, txt.
     """
+    print("开始解析"+filename)
     doc = {
         "docnm_kwd": os.path.split(filename)[-1],
         "title_tks": rag_tokenizer.tokenize(re.sub(r"\.[a-zA-Z]+$", "", os.path.split(filename)[-1]))
@@ -172,6 +173,6 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
 
 if __name__ == "__main__":
     t = Docx()
-    b = chunk(r"E:\Rag-CKH\test_file\关于印发《西安科技大学本科生科研基金资助项目管理办法（试行）》的通知.doc")
+    b = chunk(r"E:\Rag-CKH\test_file\AQ-1025-2006矿井瓦斯等级鉴定规范.pdf")
     for i in b:
         print(i)
