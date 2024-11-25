@@ -121,6 +121,15 @@ class OllamaChat(Base):
             print(e)
         return
 
+    def describe(self, image, gen_conf={"temperature": 0}):
+        messages = [{
+            'role': 'user',
+            'content': '请用中文详细描述一下图中的内容，比如时间，地点，人物，事情，人物心情等，如果有数据请提取出数据。',
+            'images': [image]
+        }]
+        return self.chat("请用中文详细描述一下图中的内容，比如时间，地点，人物，事情，人物心情等，如果有数据请提取出数据。",
+                         messages, gen_conf=gen_conf)
+
 if __name__ == '__main__':
     ollama = OllamaChat(model_name="llama3.2-vision", base_url="172.20.200.181:11434")
     gen_conf = {"temperature": 1}
