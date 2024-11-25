@@ -9,7 +9,7 @@ print(ollama_embedding.encode_queries("我是崔锴华"))
 #判断知识库是否存在，否则创建新知识库
 if not ELASTICSEARCH.indexExist(knowledgebase_name):
     ELASTICSEARCH.createIdx(knowledgebase_name, json.load(
-        open(os.path.join(get_project_base_directory(), "mapping.json"), "r")))
+        open(os.path.join(get_project_base_directory(), "knowledgebase/mapping.json"), "r")))
 
 #Laws解析方法
 from parser_content import laws

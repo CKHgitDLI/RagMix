@@ -1,8 +1,7 @@
 import uuid
 from elasticsearch_dsl import Q
 from nlp import search
-from es_conn import ELASTICSEARCH
-import hashlib
+from knowledgebase.es_conn import ELASTICSEARCH
 import pathlib
 import re
 from strenum import StrEnum
