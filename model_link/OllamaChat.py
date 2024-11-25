@@ -122,7 +122,12 @@ class OllamaChat(Base):
         return
 
 if __name__ == '__main__':
-    ollama=OllamaChat(model_name="qwen2:72b_ctx32k",base_url="172.20.200.181:11434")
+    ollama = OllamaChat(model_name="llama3.2-vision", base_url="172.20.200.181:11434")
     gen_conf = {"temperature": 1}
-    ans,_=ollama.chat("你说话应当很不礼貌，很愤怒、讨厌地回复用户的话", [{"role": "user", "content": "我叫王洋，你评价一下我"}],gen_conf=gen_conf)
+    messages = [{
+        'role': 'user',
+        'content': '请描述一下这张图片里面，墙上挂着什么？',
+        'images': [r'E:\Rag-CKH\test_file\1.png']
+    }]
+    ans, _ = ollama.chat("你是煤矿的安全员，用户的所有问题都是在询问煤矿相关知识。", messages, gen_conf=gen_conf)
     print(ans)

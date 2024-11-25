@@ -63,6 +63,7 @@ else:
     for i in range(len(ref["chunk_id"])):
         ref_s += str(i + 1) + "、文件名：{" + ref["docnm_kwd"][i] + "}\n内容：{" + ref["content_ltks"][i] + "}\n\n"
     print(ref_s)
+    # 回答问题
     for temp in ge.stream_output(history=[{"role": "user", "content": a}], chat_mdl=ollama_chat,
                                  retrieval_res=ref,
                                  embd_mdl=ollama_embedding,
