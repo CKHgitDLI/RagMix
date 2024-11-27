@@ -4,12 +4,18 @@ from workflow_component.rewrite import RewriteQuestion
 from workflow_component.categorize import Categorize
 from model_link.OllamaEmbedding import OllamaEmbed
 from workflow_component.jiansuo import Retrieval
+from workflow_component.keywords import KeywordExtract
 
 ollama_chat = OllamaChat(model_name="qwen2.5:32b_ctx32k", base_url="172.20.200.181:11434")
 ollama_embedding = OllamaEmbed(model_name="bge-m3", base_url="172.20.200.181:11434")
 
 # 测试Embedding
-print(ollama_embedding.encode_queries("我是崔锴华"))
+print(ollama_embedding.encode_queries(
+    "我是崔锴华，我是大傻逼，我要把桌子掀翻，然后再踢一脚路边的树，再把绿化带的小草全拔掉。"))
+# 获取关键词
+k = KeywordExtract()
+a = k.run("我是一个博士生，我没有女朋友。", ollama_chat, 3)
+print(a)
 
 # 总问题
 ask = "我现在要做串联通风，请问我需要安装什么传感器？"
@@ -87,3 +93,5 @@ else:
 以下是参考文本材料
 {input}""", cite=True, input=ref_s):
         print(temp)
+
+history = [{"role": "user", "content": "用户的输入"}, {"role": "assistant", "content": "大模型的输出"}]

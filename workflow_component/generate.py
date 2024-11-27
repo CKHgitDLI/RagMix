@@ -88,6 +88,22 @@ class Generate(ComponentBase):
         return res
 
     def stream_output(self, history, chat_mdl, retrieval_res, embd_mdl, prompt, max_tokens=512, temperature=0.50, top_p=0.50, presence_penalty=0.40, frequency_penalty=0.70,cite=False, **kwargs):
+        """
+        生成回答-流式输出
+        @param history:对话历史
+        @param chat_mdl:Chat模型对象
+        @param retrieval_res:知识库召回Retrieval的返回值，若形参cite为FALSE，则可以为FALSE
+        @param embd_mdl:Embedding模型对象
+        @param prompt:提示词
+        @param max_tokens:最大Token值
+        @param temperature:详见超参数-温度
+        @param top_p:详见超参数-top p
+        @param presence_penalty:详见超参数-出现惩罚
+        @param frequency_penalty:详见超参数-频率惩罚
+        @param cite:是否输出引用来源，若为TRUE，则retrieval_res不能为空
+        @param kwargs:prompt中的变量
+        @return:流式输出迭代器
+        """
         self._param=GenerateParam(max_tokens, temperature, top_p, presence_penalty, frequency_penalty)
         for n, v in kwargs.items():
             prompt = re.sub(r"\{%s\}" % re.escape(n), re.escape(str(v)), prompt)

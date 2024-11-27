@@ -13,6 +13,14 @@ def embedding(embd_mdl, cnts, batch_size=16):
     return vects,chunk_counts,token_counts
 
 def addChunk(embd_mdl,chunk,knowledgebase_name,batch_size=128):
+    """
+    将Chunk（统一格式）添加到知识库中
+    @param embd_mdl: Embedding模型
+    @param chunk: 统一格式Chunk
+    @param knowledgebase_name: 知识库名
+    @param batch_size: 批量处理量
+    @return: 
+    """
     vects,_,_ = embedding(embd_mdl, [c["content_with_weight"] for c in chunk],batch_size)
     for i, d in enumerate(chunk):
         v = vects[i]

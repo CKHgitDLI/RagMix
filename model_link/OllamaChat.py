@@ -135,7 +135,7 @@ if __name__ == '__main__':
     gen_conf = {"temperature": 1}
     messages = [{
         'role': 'user',
-        'content': '请描述一下这张图片里面，墙上挂着什么？',
+        'content': '请描述一下这张图片？墙上挂着什么？',
         'images': [r'E:\Rag-CKH\test_file\1.png']
     }]
     ans, _ = ollama.chat("你是煤矿的安全员，用户的所有问题都是在询问煤矿相关知识。", messages, gen_conf=gen_conf)

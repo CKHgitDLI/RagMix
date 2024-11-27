@@ -69,7 +69,14 @@ class CategorizeParam(GenerateParam):
 class Categorize(ABC):
     component_name = "Categorize"
 
-    def run(self, ask,chat_mdl,category_description, **kwargs):
+    def run(self, ask, chat_mdl, category_description):
+        """
+        问题分类
+        @param ask: 用户问题字符串
+        @param chat_mdl: Chat模型对象
+        @param category_description: 统一格式字典
+        @return: 字符串，问题类型
+        """
         self._param = CategorizeParam(category_description)
         input = "Question: " + ask + "\tCategory: "
         if DEBUG:print("问题分类提示词",self._param.get_prompt())

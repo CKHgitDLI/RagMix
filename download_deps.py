@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
-
 from huggingface_hub import snapshot_download
 import nltk
 import os
 import urllib.request
 from subprocess import call
+from settings import get_project_base_directory
 
 urls = [
     "http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb",
@@ -47,7 +46,7 @@ def install_package(python_env, pack_path):
 
 
 if __name__ == "__main__":
-    install_package(r"D:\CondaEnv\RagMix\python.exe", r"requirements.txt")
+    # install_package(r"D:\CondaEnv\RagMix\python.exe", r"requirements.txt")
 
     for url in urls:
         filename = url.split("/")[-1]
@@ -60,6 +59,10 @@ if __name__ == "__main__":
     for data in ['wordnet', 'punkt', 'punkt_tab']:
         print(f"Downloading nltk {data}...")
         nltk.download(data)
+
+    snapshot_download(repo_id="InfiniFlow/deepdoc",
+                      local_dir=os.path.join(get_project_base_directory(), "res/deepdoc"),
+                      local_dir_use_symlinks=False)
 
     for repo_id in repos:
         print(f"Downloading huggingface repo {repo_id}...")

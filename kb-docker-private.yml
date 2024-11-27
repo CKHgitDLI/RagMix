@@ -30,7 +30,6 @@ services:
       - ckh
     restart: always
 
-
 volumes:
   esdata01:
     driver: local

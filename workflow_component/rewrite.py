@@ -68,7 +68,14 @@ Output: What's the full name of Donald Trump's mother Mary Trump?
 class RewriteQuestion(ABC):
     component_name = "RewriteQuestion"
     _param=RewriteQuestionParam()
-    def run(self, history,chat_mdl, **kwargs):
+
+    def run(self, history, chat_mdl):
+        """
+        优化用户问题
+        @param history:对话历史的字典列表
+        @param chat_mdl:Chat模型对象
+        @return:字符串，优化后的用户问题
+        """
         hist = history
         conv = []
         for m in hist:

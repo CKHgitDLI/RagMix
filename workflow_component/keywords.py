@@ -9,9 +9,9 @@ class KeywordExtractParam(GenerateParam):
     Define the KeywordExtract component parameters.
     """
 
-    def __init__(self):
+    def __init__(self, top_n=1):
         super().__init__()
-        self.top_n = 1
+        self.top_n = top_n
 
     def check(self):
         super().check()
@@ -31,8 +31,16 @@ class KeywordExtractParam(GenerateParam):
 
 class KeywordExtract(ABC):
     component_name = "KeywordExtract"
-    _param=KeywordExtractParam()
-    def run(self, ask,chat_mdl, **kwargs):
+
+    def run(self, ask, chat_mdl, top_n):
+        """
+        获取关键词，多个关键词之间使用逗号隔开
+        @param ask:用户问题字符串
+        @param chat_mdl:Chat模型对象
+        @param top_n:提取top_n个关键词
+        @return:
+        """
+        self._param = KeywordExtractParam(top_n)
         ans,_ = chat_mdl.chat(self._param.get_prompt(), [{"role": "user", "content": ask}],
                             self._param.gen_conf())
 
@@ -45,5 +53,4 @@ if __name__ == '__main__':
     from model_link.OllamaChat import OllamaChat
     ollama_chat = OllamaChat(model_name="qwen2.5:32b_ctx32k", base_url="172.20.200.181:11434")
     k=KeywordExtract()
-    k.run("我是一个博士生，我没有女朋友。",ollama_chat)
-
+    k.run("我是一个博士生，我没有女朋友。", ollama_chat, 10)

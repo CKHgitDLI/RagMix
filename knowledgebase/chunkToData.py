@@ -3,7 +3,11 @@ import re
 
 def chunkToData(title,chunks,lang="Chinese"):
     """
-        Supported file formats are docx, pdf, txt.
+    将解析的文本列表转换为保存到知识库前的统一格式
+    @param title: 文档名
+    @param chunks: 文本列表
+    @param lang: 语言
+    @return:
     """
     doc = {
         "docnm_kwd": title,

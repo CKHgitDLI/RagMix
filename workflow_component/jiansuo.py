@@ -30,6 +30,20 @@ class Retrieval(ComponentBase, ABC):
 
     def run(self, query, embd_mdl, rerank_mdl, similarity_threshold, keywords_similarity_weight, top_n, top_k,
             empty_response,  knowledgebase_name, **kwargs):
+        """
+        知识检索
+        @param query: 用户问题或检索关键词
+        @param embd_mdl: Embedding模型
+        @param rerank_mdl: Rerank模型（可为None）
+        @param similarity_threshold: 相似度阈值
+        @param keywords_similarity_weight: 关键词相似度权重
+        @param top_n: 取得分前n的Chunk
+        @param top_k: 取得分前k个Chunk送入Rerank
+        @param empty_response: 未检索到时的空返回
+        @param knowledgebase_name: 知识库名
+        @param kwargs: 无
+        @return:
+        """
         self._param = RetrievalParam(similarity_threshold, keywords_similarity_weight, top_n, top_k, empty_response)
         kbinfos = retrievaler.retrieval(query, embd_mdl, knowledgebase_name,
                                         1, self._param.top_n,
