@@ -291,4 +291,4 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
 
 
 if __name__ == "__main__":
-    print(chunk(r"E:\Rag-CKH\test_file\2022版煤矿安全规程.docx",chunk_token_num=12))
+    print(chunk(r"E:\Rag-CKH\test_file\防治煤与瓦斯突出细则.docx", chunk_token_num=12))

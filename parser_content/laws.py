@@ -6,7 +6,7 @@ from docx import Document
 import settings
 from parser_file.utils import get_text
 from nlp import bullets_category, remove_contents_table, hierarchical_merge, make_colon_as_title, tokenize_chunks, \
-    docx_question_level
+    docx_question_level, tokenize_table
 from nlp import rag_tokenizer
 from parser_file.ragflow_docx import RAGFlowDocxParser as DocxParser
 import os
@@ -25,6 +25,24 @@ class Docx(DocxParser):
     def __call__(self, filename, binary=None, from_page=0, to_page=100000):
         self.doc = Document(
             filename) if not binary else Document(BytesIO(binary))
+        tbls = []
+        for tb in self.doc.tables:
+            html = "<table>"
+            for r in tb.rows:
+                html += "<tr>"
+                i = 0
+                while i < len(r.cells):
+                    span = 1
+                    c = r.cells[i]
+                    for j in range(i + 1, len(r.cells)):
+                        if c.text == r.cells[j].text:
+                            span += 1
+                            i = j
+                    i += 1
+                    html += f"<td>{c.text}</td>" if span == 1 else f"<td colspan='{span}'>{c.text}</td>"
+                html += "</tr>"
+            html += "</table>"
+            tbls.append(((None, html), ""))
         pn = 0
         lines = []
         bull = bullets_category([p.text for p in self.doc.paragraphs])
@@ -62,7 +80,8 @@ class Docx(DocxParser):
             sec.insert(0, lines[s][1])
 
             sections.append("\n".join(sec))
-        return [l for l in sections if l]
+
+        return [l for l in sections if l], tbls
 
     def __str__(self) -> str:
         return f'''
@@ -121,11 +140,14 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
 
     if re.search(r"\.docx$", os.path.split(filename)[-1], re.IGNORECASE):
         callback("开始解析")
-        for txt in Docx()(filename, binary):
+        txts, tbls = Docx()(filename, binary)
+        for txt in txts:
             sections.append(txt)
+        res = tokenize_table(tbls, doc, eng)
         callback("解析结束")
         chunks = sections
-        return tokenize_chunks(chunks, doc, eng, pdf_parser)
+        res.extend(tokenize_chunks(chunks, doc, eng, pdf_parser))
+        return res
 
     elif re.search(r"\.pdf$", filename, re.IGNORECASE):
         pdf_parser = Pdf() if kwargs.get(
@@ -172,5 +194,5 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
 
 
 if __name__ == "__main__":
-    b=chunk(r"E:\Rag-CKH\test_file\2022版煤矿安全规程.docx")
+    b = chunk(r"E:\Rag-CKH\test_file\防治煤与瓦斯突出细则.docx")
     print(len(b))
