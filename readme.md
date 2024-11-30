@@ -111,6 +111,8 @@ conda env create -f environment.yml
 
 ## 2 知识库的配置
 
+![](http://imagehost.ckh-cn.site/i/2024/11/30/qt9q64-0.png)
+
 ### 2.1 知识库的新建
 
 不同知识库通过知识库名（<u>knowledgebase_name</u>或<u>idxnm</u>）划分。
