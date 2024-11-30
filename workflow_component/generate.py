@@ -14,10 +14,7 @@
 #  limitations under the License.
 #
 import re
-from functools import partial
-import pandas as pd
-from litellm import max_tokens
-from sympy.physics.units import temperature
+import json
 
 from knowledgebase.link import retrievaler
 from workflow_component.base import ComponentBase, ComponentParamBase
@@ -87,7 +84,8 @@ class Generate(ComponentBase):
 
         return res
 
-    def stream_output(self, history, chat_mdl, retrieval_res, embd_mdl, prompt, max_tokens=512, temperature=0.50, top_p=0.50, presence_penalty=0.40, frequency_penalty=0.70,cite=False, **kwargs):
+    def stream_output(self, history, chat_mdl, retrieval_res, embd_mdl, prompt, max_tokens=512, temperature=0.50,
+                      top_p=0.50, presence_penalty=0.40, frequency_penalty=0.70, cite=False, sse=False, **kwargs):
         """
         生成回答-流式输出
         @param history:对话历史
@@ -101,6 +99,7 @@ class Generate(ComponentBase):
         @param presence_penalty:详见超参数-出现惩罚
         @param frequency_penalty:详见超参数-频率惩罚
         @param cite:是否输出引用来源，若为TRUE，则retrieval_res不能为空
+        @param sse:迭代是否满足SSE格式（用于EventSourceResponse）
         @param kwargs:prompt中的变量
         @return:流式输出迭代器
         """
@@ -113,12 +112,17 @@ class Generate(ComponentBase):
         for ans in chat_mdl.chat_streamly(msg[0]["content"], msg[1:], self._param.gen_conf()):
             res = {"content": ans, "reference": []}
             answer = ans
-            yield res
+            if sse:
+                yield f"{json.dumps(res)}"
+            else:
+                yield res
 
         if cite:
             res = self.set_cite(retrieval_res, answer, embd_mdl=embd_mdl)
-            yield res
-
+            if sse:
+                yield f"{json.dumps(res)}"
+            else:
+                yield res
 
 if __name__ == '__main__':
     from workflow_component.jiansuo import Retrieval
