@@ -562,7 +562,7 @@ def response(data: Dict):
             2.XXX?"
     5、最后换行输出以下结束语：
         "西安科技大学智能系统安全与控制研究所发布。鲁ICP备2023026495号（仅用于个人开发）"
-""", cite=False))
+""", cite=False, sse=True))
 
 
 uvicorn.run(app, host="127.0.0.1", port=8080)
