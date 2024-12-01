@@ -14,6 +14,7 @@ from parser_file.ragflow_pdf import RAGFlowPdfParser as PdfParser
 from settings import DEBUG
 from parser_file.ragflow_pdf import PlainParser
 
+
 class Docx(DocxParser):
     def __init__(self):
         pass
@@ -27,6 +28,12 @@ class Docx(DocxParser):
             filename) if not binary else Document(BytesIO(binary))
         tbls = []
         for tb in self.doc.tables:
+            # 定位表头
+            for i in range(len(self.doc.paragraphs)):
+                # 步骤3: 判断每个段落是否为表格
+                if self.doc.paragraphs[i]._element.tag.endswith('tbl'):
+                    if self.doc.paragraphs[i]._element == tb:
+                        print(tb)
             html = "<table>"
             for r in tb.rows:
                 html += "<tr>"
@@ -113,7 +120,7 @@ class Pdf(PdfParser):
         start = timer()
         self._layouts_rec(zoomin)
         callback("布局分析结束")
-        if DEBUG:print("布局:".format(
+        if DEBUG: print("布局:".format(
             (timer() - start) / (self.total_page + 0.1)))
         self._naive_vertical_merge()
 
@@ -122,12 +129,13 @@ class Pdf(PdfParser):
         return [(b["text"], self._line_tag(b, zoomin))
                 for b in self.boxes], None
 
+
 def chunk(filename, binary=None, from_page=0, to_page=100000,
           lang="Chinese", callback=print, **kwargs):
     """
         Supported file formats are docx, pdf, txt.
     """
-    print("开始解析"+filename)
+    print("开始解析" + filename)
     doc = {
         "docnm_kwd": os.path.split(filename)[-1],
         "title_tks": rag_tokenizer.tokenize(re.sub(r"\.[a-zA-Z]+$", "", os.path.split(filename)[-1]))
@@ -166,15 +174,17 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
 
     elif re.search(r"\.doc$", filename, re.IGNORECASE):
         print("正在转换为docx，临时文件在解析后将被自动清理")
-        filename=settings.convert_doc_to_docx(filename)
-        filename=os.path.join(settings.get_project_base_directory(),filename)
+        filename = settings.convert_doc_to_docx(filename)
+        filename = os.path.join(settings.get_project_base_directory(), filename)
         callback("开始解析")
-        for txt in Docx()(filename, binary):
+        txts, tbls = Docx()(filename, binary)
+        for txt in txts:
             sections.append(txt)
+        res = tokenize_table(tbls, doc, eng)
         callback("解析结束")
         chunks = sections
-        os.remove(filename)
-        return tokenize_chunks(chunks, doc, eng, pdf_parser)
+        res.extend(tokenize_chunks(chunks, doc, eng, pdf_parser))
+        return res
 
     else:
         raise NotImplementedError(
@@ -194,5 +204,5 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
 
 
 if __name__ == "__main__":
-    b = chunk(r"E:\Rag-CKH\test_file\防治煤与瓦斯突出细则.docx")
+    b = chunk(r"E:\Rag-CKH\test_file\1.docx")
     print(len(b))

@@ -25,9 +25,11 @@ from dataclasses import dataclass
 from nlp import rag_tokenizer, query, is_english
 import numpy as np
 
+
 def rmSpace(txt):
     txt = re.sub(r"([^a-z0-9.,\)>]) +([^ ])", r"\1\2", txt, flags=re.IGNORECASE)
     return re.sub(r"([^ ]) +([^a-z0-9.,\(<])", r"\1\2", txt, flags=re.IGNORECASE)
+
 
 def index_name(uid): return f"ragflow_{uid}"
 
@@ -100,7 +102,7 @@ class Dealer:
         if not qst:
             if not req.get("sort"):
                 s = s.sort(
-                    #{"create_time": {"order": "desc", "unmapped_type": "date"}},
+                    # {"create_time": {"order": "desc", "unmapped_type": "date"}},
                     {"create_timestamp_flt": {
                         "order": "desc", "unmapped_type": "float"}}
                 )
@@ -110,7 +112,7 @@ class Dealer:
                                       "mode": "avg", "numeric_type": "double"}},
                     {"top_int": {"order": "asc", "unmapped_type": "float",
                                  "mode": "avg", "numeric_type": "double"}},
-                    #{"create_time": {"order": "desc", "unmapped_type": "date"}},
+                    # {"create_time": {"order": "desc", "unmapped_type": "date"}},
                     {"create_timestamp_flt": {
                         "order": "desc", "unmapped_type": "float"}}
                 )
@@ -188,12 +190,13 @@ class Dealer:
                 continue
 
             txt = d["_source"][fieldnm]
-            txt = re.sub(r"[\r\n]", " ", txt, flags=re.IGNORECASE|re.MULTILINE)
+            txt = re.sub(r"[\r\n]", " ", txt, flags=re.IGNORECASE | re.MULTILINE)
             txts = []
             for t in re.split(r"[.?!;\n]", txt):
                 for w in keywords:
-                    t = re.sub(r"(^|[ .?/'\"\(\)!,:;-])(%s)([ .?/'\"\(\)!,:;-])"%re.escape(w), r"\1<em>\2</em>\3", t, flags=re.IGNORECASE|re.MULTILINE)
-                if not re.search(r"<em>[^<>]+</em>", t, flags=re.IGNORECASE|re.MULTILINE): continue
+                    t = re.sub(r"(^|[ .?/'\"\(\)!,:;-])(%s)([ .?/'\"\(\)!,:;-])" % re.escape(w), r"\1<em>\2</em>\3", t,
+                               flags=re.IGNORECASE | re.MULTILINE)
+                if not re.search(r"<em>[^<>]+</em>", t, flags=re.IGNORECASE | re.MULTILINE): continue
                 txts.append(t)
             ans[d["_id"]] = "...".join(txts) if txts else "...".join([a for a in list(hlts.items())[0][1]])
 
@@ -267,13 +270,13 @@ class Dealer:
 
         ans_v, _ = embd_mdl.encode(pieces_)
         assert len(ans_v[0]) == len(chunk_v[0]), "The dimension of query and chunk do not match: {} vs. {}".format(
-                len(ans_v[0]), len(chunk_v[0]))
+            len(ans_v[0]), len(chunk_v[0]))
 
         chunks_tks = [rag_tokenizer.tokenize(self.qryr.rmWWW(ck)).split(" ")
                       for ck in chunks]
         cites = {}
         thr = 0.63
-        while thr>0.3 and len(cites.keys()) == 0 and pieces_ and chunks_tks:
+        while thr > 0.3 and len(cites.keys()) == 0 and pieces_ and chunks_tks:
             for i, a in enumerate(pieces_):
                 sim, tksim, vtsim = self.qryr.hybrid_similarity(ans_v[i],
                                                                 chunk_v,
@@ -312,7 +315,8 @@ class Dealer:
         _, keywords = self.qryr.question(query)
         ins_embd = [
             Dealer.trans2floats(
-                sres.field[i].get("q_%d_vec" % len(sres.query_vector), "\t".join(["0"] * len(sres.query_vector)))) for i in sres.ids]
+                sres.field[i].get("q_%d_vec" % len(sres.query_vector), "\t".join(["0"] * len(sres.query_vector)))) for i
+            in sres.ids]
         if not ins_embd:
             return [], [], []
 
@@ -334,7 +338,7 @@ class Dealer:
         return sim, tksim, vtsim
 
     def rerank_by_model(self, rerank_mdl, sres, query, tkweight=0.3,
-               vtweight=0.7, cfield="content_ltks"):
+                        vtweight=0.7, cfield="content_ltks"):
         _, keywords = self.qryr.question(query)
 
         for i in sres.ids:
@@ -349,9 +353,9 @@ class Dealer:
             ins_tw.append(tks)
 
         tksim = self.qryr.token_similarity(keywords, ins_tw)
-        vtsim,_ = rerank_mdl.similarity(query, [rmSpace(" ".join(tks)) for tks in ins_tw])
+        vtsim, _ = rerank_mdl.similarity(query, [rmSpace(" ".join(tks)) for tks in ins_tw])
 
-        return tkweight*np.array(tksim) + vtweight*vtsim, tksim, vtsim
+        return tkweight * np.array(tksim) + vtweight * vtsim, tksim, vtsim
 
     def hybrid_similarity(self, ans_embd, ins_embd, ans, inst):
         return self.qryr.hybrid_similarity(ans_embd,
@@ -360,13 +364,14 @@ class Dealer:
                                            rag_tokenizer.tokenize(inst).split(" "))
 
     def retrieval(self, question, embd_mdl, knowledgebase_name, page, page_size, similarity_threshold=0.2,
-                  vector_similarity_weight=0.3, top=1024, doc_ids=None, aggs=True, rerank_mdl=None, highlight=False,kb_ids=None):
+                  vector_similarity_weight=0.3, top=1024, doc_ids=None, aggs=True, rerank_mdl=None, highlight=False,
+                  kb_ids=None):
         ranks = {"total": 0, "chunks": [], "doc_aggs": {}}
         if not question:
             return ranks
 
         RERANK_PAGE_LIMIT = 3
-        req = {"kb_ids": kb_ids, "doc_ids": doc_ids, "size": max(page_size*RERANK_PAGE_LIMIT, 128),
+        req = {"kb_ids": kb_ids, "doc_ids": doc_ids, "size": max(page_size * RERANK_PAGE_LIMIT, 128),
                "question": question, "vector": True, "topk": top,
                "similarity": similarity_threshold,
                "available_int": 1}
@@ -384,13 +389,14 @@ class Dealer:
         if page <= RERANK_PAGE_LIMIT:
             if rerank_mdl:
                 sim, tsim, vsim = self.rerank_by_model(rerank_mdl,
-                    sres, question, 1 - vector_similarity_weight, vector_similarity_weight)
+                                                       sres, question, 1 - vector_similarity_weight,
+                                                       vector_similarity_weight)
             else:
                 sim, tsim, vsim = self.rerank(
                     sres, question, 1 - vector_similarity_weight, vector_similarity_weight)
-            idx = np.argsort(sim * -1)[(page-1)*page_size:page*page_size]
+            idx = np.argsort(sim * -1)[(page - 1) * page_size:page * page_size]
         else:
-            sim = tsim = vsim = [1]*len(sres.ids)
+            sim = tsim = vsim = [1] * len(sres.ids)
             idx = list(range(len(sres.ids)))
 
         dim = len(sres.query_vector)
@@ -438,7 +444,7 @@ class Dealer:
                               # "doc_id": v["doc_id"],
                               "count": v["count"]} for k,
                              v in sorted(ranks["doc_aggs"].items(),
-                                         key=lambda x:x[1]["count"] * -1)]
+                                         key=lambda x: x[1]["count"] * -1)]
 
         return ranks
 
@@ -456,7 +462,7 @@ class Dealer:
                     r.group(1),
                     r.group(2),
                     r.group(3)),
-                    match))
+                 match))
 
         for p, r in replaces:
             sql = sql.replace(p, r, 1)
