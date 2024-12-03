@@ -21,7 +21,7 @@ app.add_middleware(
 
 
 @app.post("/chat")
-def response(data: Dict):
+async def response(data: Dict):
     history = data['history']
     return EventSourceResponse(ge.stream_output(history=history, chat_mdl=ollama_chat,
                                                 retrieval_res=None,
@@ -45,4 +45,7 @@ def response(data: Dict):
 """, cite=False, sse=True))
 
 
-uvicorn.run(app, host="127.0.0.1", port=8080)
+log_config = uvicorn.config.LOGGING_CONFIG
+log_config["formatters"]["access"]["fmt"] = "%(asctime)s - %(levelname)s - %(message)s"
+log_config["formatters"]["default"]["fmt"] = "%(asctime)s - %(levelname)s - %(message)s"
+uvicorn.run(app, host="59.74.169.90", port=8080, log_config=log_config)
