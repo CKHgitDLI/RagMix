@@ -3,7 +3,7 @@ import comtypes.client
 from ruamel.yaml import YAML
 
 SERVICE_CONF = "service_conf.yaml"
-PROJECT_BASE = "E:\\Rag-CKH\\"
+PROJECT_BASE = "D:\\program_work\\RagMix\\"
 
 FLOAT_ZERO = 1e-8
 PARAM_MAXDEPTH = 5
