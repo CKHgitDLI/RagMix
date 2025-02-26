@@ -3,3 +3,4 @@
 /test_file/
 /res/deepdoc/
 /application/
+*.pyc

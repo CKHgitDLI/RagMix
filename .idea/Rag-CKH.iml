@@ -3,6 +3,9 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/64env" />
+      <excludeFolder url="file://$MODULE_DIR$/huggingface.co" />
+      <excludeFolder url="file://$MODULE_DIR$/nltk_data" />
+      <excludeFolder url="file://$MODULE_DIR$/res/deepdoc" />
     </content>
     <orderEntry type="jdk" jdkName="RagMix" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
