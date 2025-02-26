@@ -218,7 +218,7 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
         pdf_parser = Pdf(
         ) if parser_config.get("layout_recognize", True) else PlainParser()
         sections, tbls = pdf_parser(filename if not binary else binary,
-                                    from_page=from_page, to_page=to_page, print=print)
+                                    from_page=from_page, to_page=to_page, callback=print)
         res = tokenize_table(tbls, doc, eng)
 
     elif re.search(r"\.xlsx?$", filename, re.IGNORECASE):

@@ -46,24 +46,24 @@ def install_package(python_env, pack_path):
 
 
 if __name__ == "__main__":
-    # install_package(r"D:\CondaEnv\RagMix\python.exe", r"requirements.txt")
+    install_package(r"D:\CondaEnv\RagMix\python.exe", r"requirements.txt")
 
-    for url in urls:
-        filename = url.split("/")[-1]
-        print(f"Downloading {url}...")
-        if not os.path.exists(filename):
-            urllib.request.urlretrieve(url, filename)
-
-    local_dir = os.path.abspath('nltk_data')
-    print(local_dir)
-    for data in ['wordnet', 'punkt', 'punkt_tab']:
-        print(f"Downloading nltk {data}...")
-        nltk.download(data)
-
-    snapshot_download(repo_id="InfiniFlow/deepdoc",
-                      local_dir=os.path.join(get_project_base_directory(), "res/deepdoc"),
-                      local_dir_use_symlinks=False)
-
-    for repo_id in repos:
-        print(f"Downloading huggingface repo {repo_id}...")
-        download_model(repo_id)
+    # for url in urls:
+    #     filename = url.split("/")[-1]
+    #     print(f"Downloading {url}...")
+    #     if not os.path.exists(filename):
+    #         urllib.request.urlretrieve(url, filename)
+    #
+    # local_dir = os.path.abspath('nltk_data')
+    # print(local_dir)
+    # for data in ['wordnet', 'punkt', 'punkt_tab']:
+    #     print(f"Downloading nltk {data}...")
+    #     nltk.download(data)
+    #
+    # snapshot_download(repo_id="InfiniFlow/deepdoc",
+    #                   local_dir=os.path.join(get_project_base_directory(), "res/deepdoc"),
+    #                   local_dir_use_symlinks=False)
+    #
+    # for repo_id in repos:
+    #     print(f"Downloading huggingface repo {repo_id}...")
+    #     download_model(repo_id)

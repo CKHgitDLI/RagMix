@@ -18,7 +18,7 @@ from knowledgebase.insert import addChunk
 a = laws.chunk
 
 # 指定文件解析Chunk
-chunk = a(r"E:\Rag-CKH\test_file\2022版煤矿安全规程.docx")
+chunk = a(r"D:\program_work\三库资料\经验知识库\2024年3月28日黑龙关煤业主井皮带温度故障分析报告.docx")
 
 # 添加到数据库中
 from model_link.OllamaEmbedding import OllamaEmbed

@@ -1,4 +1,4 @@
 es:
-  hosts: 'http://127.0.0.1:1200'
+  hosts: 'http://59.74.169.92:1200'
   username: 'elastic'
-  password: 'ckh'
+  password: 'infini_rag_flow'

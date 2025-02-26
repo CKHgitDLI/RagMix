@@ -137,7 +137,7 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
     """
     print("开始解析" + filename)
     doc = {
-        "docnm_kwd": os.path.split(filename)[-1],
+        "docnm_kwd": ".".join(os.path.split(filename)[-1].split(".")[:-1]),
         "title_tks": rag_tokenizer.tokenize(re.sub(r"\.[a-zA-Z]+$", "", os.path.split(filename)[-1]))
     }
     doc["title_sm_tks"] = rag_tokenizer.fine_grained_tokenize(doc["title_tks"])
