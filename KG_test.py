@@ -35,7 +35,7 @@ graph_db = Neo4jGraph(
     database=os.environ["NEO4J_DATABASE"]
 )
 
-doc = make_kg.read_doc_for_kg(file_path="text.txt")
+doc = make_kg.read_doc_for_kg(file_path="test_file/text.txt")
 
 graph_documents = make_kg.make_kg(llm=llm, documents=doc)
 
