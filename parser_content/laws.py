@@ -1,8 +1,6 @@
-from tika import parser
 import re
 from io import BytesIO
 from docx import Document
-
 import settings
 from parser_file.utils import get_text
 from nlp import bullets_category, remove_contents_table, hierarchical_merge, make_colon_as_title, tokenize_chunks, \

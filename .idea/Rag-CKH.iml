@@ -7,7 +7,7 @@
       <excludeFolder url="file://$MODULE_DIR$/nltk_data" />
       <excludeFolder url="file://$MODULE_DIR$/res/deepdoc" />
     </content>
-    <orderEntry type="jdk" jdkName="RagMix" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="CKH_Neo4j_KG_System" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">
