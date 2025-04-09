@@ -28,7 +28,7 @@ def chunks_for_kg(chunks):
 
 def make_kg(llm, documents):
     llm_transformer = LLMGraphTransformer(llm=llm)
-    graph_documents = llm_transformer.convert_to_graph_documents(documents)
+    graph_documents = llm_transformer.convert_to_graph_documents(documents, node_properties=True)
     print("共创建了%d个知识图谱" % (len(graph_documents)))
     return graph_documents
 

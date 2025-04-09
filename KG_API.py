@@ -1,3 +1,9 @@
+import os
+from fastapi import FastAPI, UploadFile, File
+from sse_starlette.sse import EventSourceResponse
+from fastapi.middleware.cors import CORSMiddleware
+from typing import Dict
+import uvicorn
 from langchain_community.llms.tongyi import Tongyi
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
@@ -39,35 +45,36 @@ graph_db = Neo4jGraph(
     password=os.environ["NEO4J_PASSWORD"],
     database=os.environ["NEO4J_DATABASE"]
 )
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
-# doc = make_kg.read_doc_for_kg(file_path="test_file/text.txt")
-#
-# graph_documents = make_kg.make_kg(llm=llm, documents=doc)
-#
-# graph_db.add_graph_documents(
-#     graph_documents,
-#     baseEntityLabel=True,
-#     include_source=True
-# )
-#
-# template = """
-# 仅根据下列上下文回答问题:
-# {context}
-#
-# Question: {question}
-# 使用自然语言，简洁明了.
-# """
-# prompt = ChatPromptTemplate.from_template(template)
 
-print(111111)
-print(full_retriever("老人的钱来自哪里", llm2, embeddings, graph_db))
+@app.post("/chat")
+async def response(data: Dict):
+    ask = data['ask']
+    graph_data, vector_data = full_retriever(ask, llm2, embeddings, graph_db)
+    return {"graph_data": graph_data, "vector_data": vector_data}
 
-# def clear_database(tx):
-#     # 删除所有关系
-#     tx.run("MATCH ()-[r]->() DELETE r")
-#     # 删除所有节点
-#     tx.run("MATCH (n) DELETE n")
-#
-#
-# with graph_db.session() as session:
-#     session.write_transaction(clear_database)
+
+@app.post("/upload")
+async def create_upload_file(file: UploadFile = File(...)):
+    print(file.filename)
+    dirs = 'uploads_doc'
+    if not os.path.exists(dirs):
+        os.makedirs(dirs)
+    file_location = f"{dirs}/{file.filename}"
+    with open(file_location, "wb") as file_object:
+        file_object.write(file.file.read())
+    return {"filename": file.filename}
+
+
+log_config = uvicorn.config.LOGGING_CONFIG
+log_config["formatters"]["access"]["fmt"] = "%(asctime)s - %(levelname)s - %(message)s"
+log_config["formatters"]["default"]["fmt"] = "%(asctime)s - %(levelname)s - %(message)s"
+uvicorn.run(app, host="127.0.0.1", port=8090, log_config=log_config)
