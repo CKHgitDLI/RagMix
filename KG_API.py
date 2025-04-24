@@ -86,7 +86,7 @@ app.add_middleware(
 )
 
 
-@app.post("/kg")
+@app.post("/kag")
 async def response(data: Dict):
     ask = data['ask']
     graph_data, vector_data = full_retriever(ask, llm2, embeddings, graph_db)
@@ -110,6 +110,7 @@ async def parse_rag(data: Dict):
     filename = data['filename']
     dir = "D:\\program_work\\RAGMix_KG-CKH\\test_file\\" + filename
     chunk = a(dir)
+    rm_chunk("ckh", filename)
     addChunk(embd_mdl=ollama_embedding, chunk=chunk, knowledgebase_name="ckh")
     return {"chunk": chunk}
 
@@ -148,21 +149,24 @@ async def parse_kg(data: Dict):
         baseEntityLabel=True,
         include_source=True
     )
+    global graph_documents_g
     graph_documents_g = graph_documents
     return {"status": 200}
 
 
 @app.post("/parse_kg_apply")
 async def parse_rag(data: Dict):
+    global graph_documents_g
     status = 100
     if graph_documents_g == "":
         status = 100
     else:
-        graph_db_t.add_graph_documents(
+        graph_db.add_graph_documents(
             graph_documents_g,
             baseEntityLabel=True,
             include_source=True
         )
+        status = 200
     return {"status": status}
 
 
