@@ -31,19 +31,19 @@ llm2 = Tongyi(model="qwen-plus",
               temperature=0,
               top_p=0.7)
 
-embeddings = OllamaEmbeddings(model="bge-large")
+embeddings = OllamaEmbeddings(model="bge-m3:latest")
 
-graph_db = Neo4jGraph(
-    url=os.environ["NEO4J_URI"],
-    username=os.environ["NEO4J_USERNAME"],
-    password=os.environ["NEO4J_PASSWORD"],
-    database=os.environ["NEO4J_DATABASE"]
-)
+# graph_db = Neo4jGraph(
+#     url=os.environ["NEO4J_URI"],
+#     username=os.environ["NEO4J_USERNAME"],
+#     password=os.environ["NEO4J_PASSWORD"],
+#     database=os.environ["NEO4J_DATABASE"]
+# )
 
-# doc = make_kg.read_doc_for_kg(file_path="test_file/text.txt")
-#
-# graph_documents = make_kg.make_kg(llm=llm, documents=doc)
-#
+doc = make_kg.read_doc_for_kg(file_path=r"D:\program_work\RAGMix_KG-CKH\test_file\防治煤与瓦斯突出细则-部分.docx")
+
+graph_documents = make_kg.make_kg(llm=llm1, documents=doc)
+
 # graph_db.add_graph_documents(
 #     graph_documents,
 #     baseEntityLabel=True,
@@ -59,8 +59,8 @@ graph_db = Neo4jGraph(
 # """
 # prompt = ChatPromptTemplate.from_template(template)
 
-print(111111)
-print(full_retriever("老人的钱来自哪里", llm2, embeddings, graph_db))
+# print(111111)
+# print(full_retriever("老人的钱来自哪里", llm2, embeddings, graph_db))
 
 # def clear_database(tx):
 #     # 删除所有关系

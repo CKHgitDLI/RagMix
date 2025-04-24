@@ -12,10 +12,34 @@ from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 import os
 from langchain_community.embeddings import DashScopeEmbeddings
-from langchain.graphs import Neo4jGraph
+from langchain_community.graphs import Neo4jGraph
 from knowledge_graph import make_kg
 from knowledge_graph.kag import full_retriever, graph_retriever
-from langchain.embeddings import OllamaEmbeddings
+from langchain_community.embeddings import OllamaEmbeddings
+from knowledgebase.link import ELASTICSEARCH
+from model_link.OllamaEmbedding import OllamaEmbed
+from knowledgebase.delete import rm_chunk
+from workflow_component.jiansuo import Retrieval
+from langchain_core.documents import Document
+from neo4j import GraphDatabase
+
+ollama_embedding = OllamaEmbed(model_name="bge-m3:latest", base_url="127.0.0.1:11434")  # embedding
+knowledgebase_name = "ckh"  # 知识库名称
+# 判断知识库是否存在，否则创建新知识库
+import json
+from settings import get_project_base_directory
+import os
+
+if not ELASTICSEARCH.indexExist(knowledgebase_name):
+    ELASTICSEARCH.createIdx(knowledgebase_name, json.load(
+        open(os.path.join(get_project_base_directory(), "knowledgebase/mapping.json"), "r")))
+
+# 使用内置Laws解析方法
+from parser_content import laws
+from knowledgebase.insert import addChunk
+
+# 定义解析方法钩子
+a = laws.chunk
 
 load_dotenv()
 os.environ["DASHSCOPE_API_KEY"] = "sk-b5883e47d69a417daae9f529e8e3ebf8"
@@ -45,6 +69,13 @@ graph_db = Neo4jGraph(
     password=os.environ["NEO4J_PASSWORD"],
     database=os.environ["NEO4J_DATABASE"]
 )
+
+graph_db_t = Neo4jGraph(
+    url=os.environ["NEO4J_URI"],
+    username=os.environ["NEO4J_USERNAME"],
+    password=os.environ["NEO4J_PASSWORD"],
+    database="neo4j"
+)
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -55,7 +86,7 @@ app.add_middleware(
 )
 
 
-@app.post("/chat")
+@app.post("/kg")
 async def response(data: Dict):
     ask = data['ask']
     graph_data, vector_data = full_retriever(ask, llm2, embeddings, graph_db)
@@ -72,6 +103,87 @@ async def create_upload_file(file: UploadFile = File(...)):
     with open(file_location, "wb") as file_object:
         file_object.write(file.file.read())
     return {"filename": file.filename}
+
+
+@app.post("/parse_rag")
+async def parse_rag(data: Dict):
+    filename = data['filename']
+    dir = "D:\\program_work\\RAGMix_KG-CKH\\test_file\\" + filename
+    chunk = a(dir)
+    addChunk(embd_mdl=ollama_embedding, chunk=chunk, knowledgebase_name="ckh")
+    return {"chunk": chunk}
+
+
+graph_documents_g = ""
+
+
+def clear_database(tx):
+    # 删除所有关系
+    tx.run("MATCH ()-[r]->() DELETE r")
+    # 删除所有节点
+    tx.run("MATCH (n) DELETE n")
+
+
+@app.post("/parse_kg")
+async def parse_kg(data: Dict):
+    driver = GraphDatabase.driver(uri=os.environ["NEO4J_URI"],
+                                  database="neo4j",
+                                  auth=(os.environ["NEO4J_USERNAME"],
+                                        os.environ["NEO4J_PASSWORD"]))
+    with driver.session() as session:
+        session.write_transaction(clear_database)
+    driver.close()
+    filename = data['filename']
+    dir = "D:\\program_work\\RAGMix_KG-CKH\\test_file\\" + filename
+    chunk = a(dir)
+    doc = []
+    for i in chunk:
+        doc.append(Document(page_content=i['content_with_weight']))
+    graph_documents = make_kg.make_kg(llm=Tongyi(model="qwen-plus",
+                                                 api_key="sk-b5883e47d69a417daae9f529e8e3ebf8",
+                                                 temperature=0,
+                                                 top_p=0.7), documents=doc)
+    graph_db_t.add_graph_documents(
+        graph_documents,
+        baseEntityLabel=True,
+        include_source=True
+    )
+    graph_documents_g = graph_documents
+    return {"status": 200}
+
+
+@app.post("/parse_kg_apply")
+async def parse_rag(data: Dict):
+    status = 100
+    if graph_documents_g == "":
+        status = 100
+    else:
+        graph_db_t.add_graph_documents(
+            graph_documents_g,
+            baseEntityLabel=True,
+            include_source=True
+        )
+    return {"status": status}
+
+
+@app.post("/del_doc")
+async def del_doc(data: Dict):
+    filename = data['filename']
+    rm_chunk("ckh", filename)
+    return {"status": 200}
+
+
+@app.post("/rag")
+async def rag(data: Dict):
+    re = Retrieval()
+    ref = re.run(query=data["ask"], embd_mdl=ollama_embedding, rerank_mdl=None,
+                 similarity_threshold=data["similarity_threshold"],
+                 keywords_similarity_weight=data['keywords_similarity_weight'],
+                 top_n=data['top_n'],
+                 top_k=data['top_k'],
+                 empty_response="",
+                 knowledgebase_name="ckh")
+    return {"rag": ref}
 
 
 log_config = uvicorn.config.LOGGING_CONFIG

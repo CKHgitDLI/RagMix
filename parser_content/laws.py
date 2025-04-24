@@ -202,5 +202,5 @@ def chunk(filename, binary=None, from_page=0, to_page=100000,
 
 
 if __name__ == "__main__":
-    b = chunk(r"E:\Rag-CKH\test_file\1.docx")
+    b = chunk(r"D:\program_work\RAGMix_KG-CKH\test_file\1.docx")
     print(len(b))
