@@ -187,7 +187,13 @@ async def rag(data: Dict):
                  top_k=data['top_k'],
                  empty_response="",
                  knowledgebase_name="ckh")
-    return {"rag": ref}
+    ref_s = ""
+    try:
+        for i in range(len(ref["chunk_id"])):
+            ref_s += str(i + 1) + "、文件名：{" + ref["docnm_kwd"][i] + "}\n内容：{" + ref["content_ltks"][i] + "}\n\n"
+    except:
+        ref_s = "未检索到相关文件"
+    return {"rag": ref, "rag_s": ref_s}
 
 
 log_config = uvicorn.config.LOGGING_CONFIG
