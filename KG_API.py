@@ -167,6 +167,7 @@ async def parse_rag(data: Dict):
             include_source=True
         )
         status = 200
+        graph_documents_g == ""
     return {"status": status}
 
 
