@@ -23,7 +23,8 @@ from workflow_component.jiansuo import Retrieval
 from langchain_core.documents import Document
 from neo4j import GraphDatabase
 
-ollama_embedding = OllamaEmbed(model_name="bge-m3:latest", base_url="127.0.0.1:11434")  # embedding
+Embedding_name = "bge-m3"
+ollama_embedding = OllamaEmbed(model_name=Embedding_name, base_url="127.0.0.1:11434")  # embedding
 knowledgebase_name = "ckh"  # 知识库名称
 # 判断知识库是否存在，否则创建新知识库
 import json
@@ -61,7 +62,7 @@ llm2 = Tongyi(model="qwen-plus",
               temperature=0,
               top_p=0.7)
 
-embeddings = OllamaEmbeddings(model="bge-large")
+embeddings = OllamaEmbeddings(model=Embedding_name)
 
 graph_db = Neo4jGraph(
     url=os.environ["NEO4J_URI"],
