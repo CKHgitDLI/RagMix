@@ -44,8 +44,8 @@ a = laws.chunk
 
 load_dotenv()
 os.environ["DASHSCOPE_API_KEY"] = "sk-b5883e47d69a417daae9f529e8e3ebf8"
-url = "bolt://localhost:7687"
-os.environ["NEO4J_URI"] = "bolt://localhost:7687"
+url = "bolt://129.211.14.136:7687"
+os.environ["NEO4J_URI"] = "bolt://129.211.14.136:7687"
 os.environ["NEO4J_USERNAME"] = "neo4j"
 os.environ["NEO4J_PASSWORD"] = "1609936983"
 os.environ["NEO4J_DATABASE"] = "ckh"
