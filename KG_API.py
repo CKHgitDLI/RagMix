@@ -24,7 +24,10 @@ from langchain_core.documents import Document
 from neo4j import GraphDatabase
 
 Embedding_name = "bge-m3"
-ollama_embedding = OllamaEmbed(model_name=Embedding_name, base_url="127.0.0.1:11434")  # embedding
+ollama_embedding = OllamaEmbed(model_name=Embedding_name, base_url="ckh-cn.site:11434")  # embedding
+# 测试Embedding
+print(ollama_embedding.encode_queries(
+    "我是崔锴华，我要把桌子掀翻，然后再踢一脚路边的树，再把绿化带的小草全拔掉。"))
 knowledgebase_name = "ckh"  # 知识库名称
 # 判断知识库是否存在，否则创建新知识库
 import json
@@ -44,11 +47,10 @@ a = laws.chunk
 
 load_dotenv()
 os.environ["DASHSCOPE_API_KEY"] = "sk-b5883e47d69a417daae9f529e8e3ebf8"
-url = "bolt://129.211.14.136:7687"
 os.environ["NEO4J_URI"] = "bolt://129.211.14.136:7687"
 os.environ["NEO4J_USERNAME"] = "neo4j"
 os.environ["NEO4J_PASSWORD"] = "1609936983"
-os.environ["NEO4J_DATABASE"] = "ckh"
+os.environ["NEO4J_DATABASE"] = "neo4j"
 
 llm1 = ChatOpenAI(
     api_key=os.getenv("DASHSCOPE_API_KEY"),
