@@ -24,7 +24,7 @@ from langchain_core.documents import Document
 from neo4j import GraphDatabase
 
 Embedding_name = "bge-m3"
-ollama_embedding = OllamaEmbed(model_name=Embedding_name, base_url="ckh-cn.site:11434")  # embedding
+ollama_embedding = OllamaEmbed(model_name=Embedding_name, base_url="127.0.0.1:11434")  # embedding
 # 测试Embedding
 print(ollama_embedding.encode_queries(
     "我是崔锴华，我要把桌子掀翻，然后再踢一脚路边的树，再把绿化带的小草全拔掉。"))
