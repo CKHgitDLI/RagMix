@@ -1,4 +1,4 @@
 es:
-  hosts: 'http://127.0.0.1:1200'
+  hosts: 'http://ckh-cn.site:1200'
   username: 'elastic'
   password: 'ckh'

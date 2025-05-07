@@ -25,7 +25,7 @@ from neo4j import GraphDatabase
 
 Embedding_name = "bge-m3"
 ollama_embedding = OllamaEmbed(model_name=Embedding_name, base_url="127.0.0.1:11434")  # embedding
-knowledgebase_name = "ckh"  # 知识库名称
+knowledgebase_name = "ckh_test"  # 知识库名称
 # 判断知识库是否存在，否则创建新知识库
 import json
 from settings import get_project_base_directory
@@ -111,8 +111,8 @@ async def parse_rag(data: Dict):
     filename = data['filename']
     dir = "D:\\program_work\\RAGMix_KG-CKH\\test_file\\" + filename
     chunk = a(dir)
-    rm_chunk("ckh", filename)
-    addChunk(embd_mdl=ollama_embedding, chunk=chunk, knowledgebase_name="ckh")
+    rm_chunk(knowledgebase_name, filename)
+    addChunk(embd_mdl=ollama_embedding, chunk=chunk, knowledgebase_name=knowledgebase_name)
     return {"chunk": chunk}
 
 
@@ -188,7 +188,7 @@ async def rag(data: Dict):
                  top_n=data['top_n'],
                  top_k=data['top_k'],
                  empty_response="",
-                 knowledgebase_name="ckh")
+                 knowledgebase_name=knowledgebase_name)
     ref_s = ""
     try:
         for i in range(len(ref["chunk_id"])):
